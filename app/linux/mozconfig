@@ -8,6 +8,7 @@ ac_add_options MOZ_ENABLE_JS_DUMP=1
 ac_add_options MOZ_ENABLE_FORKSERVER=
 ac_add_options MOZ_TELEMETRY_REPORTING=
 ac_add_options MOZ_DATA_REPORTING=
+ac_add_options --disable-updater
 ac_add_options --disable-tests
 ac_add_options --disable-debug
 ac_add_options --disable-debug-symbols
