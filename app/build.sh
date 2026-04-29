@@ -609,9 +609,6 @@ mv omni.ja ..
 cd "$CALLDIR"
 rm -rf "$omni_dir"
 
-# Copy updater.ini
-cp "$CALLDIR/assets/updater.ini" "$base_dir"
-
 # Adjust chrome.manifest
 #perl -pi -e 's^(chrome|resource)/^jar:zotero.jar\!/$1/^g' "$BUILD_DIR/zotero/chrome.manifest"
 
@@ -1031,17 +1028,11 @@ if [ $BUILD_LINUX == 1 ]; then
 		mkdir "$APPDIR"
 		
 		# Merge relevant assets from Firefox
-		cp -r "$runtime_path/"!(application.ini|browser|defaults|devtools-files|crashreporter|crashreporter.ini|firefox|pingsender|precomplete|removed-files|run-mozilla.sh|update-settings.ini|updater|updater.ini) "$APPDIR"
+		cp -r "$runtime_path/"!(application.ini|browser|defaults|devtools-files|crashreporter|crashreporter.ini|firefox-esr-bin|pingsender|precomplete|removed-files|run-mozilla.sh|update-settings.ini) "$APPDIR"
 		
 		# Use our own launcher that calls the original Firefox executable with -app
-		mv "$APPDIR"/firefox-bin "$APPDIR"/zotero-bin
+		mv "$APPDIR"/firefox-esr "$APPDIR"/zotero-bin
 		cp "$CALLDIR/linux/zotero" "$APPDIR"/zotero
-		
-		# Copy Ubuntu launcher files
-		cp "$CALLDIR/linux/zotero.desktop" "$APPDIR"
-		cp "$CALLDIR/linux/set_launcher_icon" "$APPDIR"
-		
-		# Use our own updater, because Mozilla's requires updates signed by Mozilla
 
 		# Copy app files
 		rsync -a "$base_dir/" "$APPDIR/"
@@ -1051,6 +1042,7 @@ if [ $BUILD_LINUX == 1 ]; then
 		cp -RH "$CALLDIR/modules/zotero-libreoffice-integration/install" "$APPDIR/integration/libreoffice"
 		
 		# Copy icons
+		mkdir -pv "$APPDIR/icons"
 		cp "$CALLDIR/linux/icons/icon32.png" "$APPDIR/icons/"
 		cp "$CALLDIR/linux/icons/icon64.png" "$APPDIR/icons/"
 		cp "$CALLDIR/linux/icons/icon128.png" "$APPDIR/icons/"
@@ -1062,7 +1054,6 @@ if [ $BUILD_LINUX == 1 ]; then
 		
 		# Copy over removed-files and make a precomplete file
 		pushd "$APPDIR"
-		cp "$CALLDIR/update-packaging/removed-files_linux-$arch" removed-files
 		python3 "$CALLDIR/scripts/createprecomplete.py"
 		if [ ! -s precomplete ]; then
 			echo "precomplete file not created -- aborting" 2>&1
