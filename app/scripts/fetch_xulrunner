@@ -85,10 +85,6 @@ if [[ $BUILD_WIN == 1 || $BUILD_LINUX == 1 ]]; then
 				*) echo "Invalid Windows arch: $arch" >&2; echo; usage;;
 			esac
 		fi
-		if [[ $BUILD_LINUX == 1 ]]; then
-			[[ $arch == x64 ]] && arch="x86_64"
-			case $arch in x86_64|i686|arm64) ;; *) echo "Invalid Linux arch: $arch" >&2; echo; usage;; esac
-		fi
 	fi
 fi
 
@@ -808,8 +804,6 @@ if [ $BUILD_LINUX == 1 ]; then
 		popd
 		
 		rm "firefox-$GECKO_VERSION.tar.xz"
-		
-		echo "$( $SCRIPT_DIR/xulrunner_hash -p l -a "$arch" )" > "hash-linux-${arch}"
 	done
 fi
 

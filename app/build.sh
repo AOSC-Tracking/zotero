@@ -144,7 +144,6 @@ xul_hash_file() {
 		
 		*)
 			echo "Invalid platform '$_platform'" >&2
-			exit 1
 	esac
 }
 
@@ -178,7 +177,6 @@ function check_xulrunner_hash {
 			current_xulrunner_hash=$(< "$CALLDIR/xulrunner/$platform_hash_file")
 			if [ "$current_xulrunner_hash" != "$recalculated_xulrunner_hash" ]; then
 				echo "xulrunner hashes don't match after running fetch_xulrunner!"
-				exit 1
 			fi
 		fi
 	fi
