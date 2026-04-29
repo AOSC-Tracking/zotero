@@ -151,15 +151,6 @@ function modify_omni {
 	# Continue using app.update.auto in prefs.js on Windows
 	replace_line 'PER_INSTALLATION_PREFS_PLATFORMS = \["win"\]' 'PER_INSTALLATION_PREFS_PLATFORMS = []' modules/UpdateUtils.sys.mjs
 	
-	# Prompt if major update is available instead of installing automatically on restart
-	replace_line 'if \(!updateAuto\) \{' 'if (update.type == "major") {
-      LOG("UpdateService:_selectAndInstallUpdate - prompting because it is a major update");
-      AUSTLMY.pingCheckCode(this._pingSuffix, AUSTLMY.CHK_SHOWPROMPT_PREF);
-      Services.obs.notifyObservers(update, "update-available", "show-prompt");
-      return;
-    }
-    if (!updateAuto) {' modules/UpdateService.sys.mjs
-	
 	# Avoid console warning about resource://gre/modules/FxAccountsCommon.js
 	replace_line 'const logins = this._data.logins;' 'const logins = this._data.logins; if (this._data.logins.length != -1) return;' modules/LoginStore.sys.mjs
 	
@@ -765,30 +756,12 @@ if [ $BUILD_LINUX == 1 ]; then
 	for arch in "${arch_list[@]}"; do
 		xdir="firefox-linux-$arch"
 		rm -rf $xdir
-		
-		archived_file="firefox-$GECKO_VERSION-$arch.tar.xz"
-		if [ -e "$archived_file" ]; then
-			echo "Using $archived_file"
-			cp "$archived_file" "firefox-$GECKO_VERSION.tar.xz"
-		else
-			if [ $arch = "arm64" ]; then
-				moz_arch=aarch64
-			else
-				moz_arch=$arch
-			fi
-			curl -O "$DOWNLOAD_URL/linux-$moz_arch/en-US/firefox-$GECKO_VERSION.tar.xz"
-			# Store local copy of unmodified app
-			cp "firefox-$GECKO_VERSION.tar.xz" "$archived_file"
-		fi
 
-		tar xvf firefox-$GECKO_VERSION.tar.xz
-		mv firefox $xdir
+		cp -rv "/usr/lib/firefox-esr" "$xdir"
 
 		pushd $xdir
 		modify_omni $arch
 		popd
-		
-		rm "firefox-$GECKO_VERSION.tar.xz"
 	done
 fi
 
