@@ -151,10 +151,6 @@ function modify_omni {
 	# Prevent error during network requests
 	replace_line 'async lazyInit\(\) \{' 'async lazyInit() { if (this.features) return false;' modules/UrlClassifierExceptionListService.sys.mjs
 
-	# Silence CrashManager "Could not get children of [...]/Crash Reports/events" spam
-	replace_line '\/\/ Missing events folders are allowed' '\/\/ Missing events folders are allowed (silence warning)
-        if (ex) return entries;' modules/CrashManager.sys.mjs
-
 	# Several services pull in services-settings (which we strip) and throw
 	# at profile-after-change. Remove their #init() methods to prevent errors.
 	replace_line 'async #init\(\) \{' 'async #init() {} async _unused_init() {' modules/EssentialDomainsRemoteSettings.sys.mjs
